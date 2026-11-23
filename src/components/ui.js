@@ -16,10 +16,14 @@ export function formatEUR(value) {
 
 export function renderProductCard({
   title = 'Untitled artwork',
+  description = '',
   price = null,
   imageLabel = 'Product image placeholder',
+  imageUrl = null,
   href = '/product/',
   available = null,
+  actionLabel = null,
+  actionHref = null,
 } = {}) {
   const priceMarkup = price === null
     ? '<span class="product-card-price is-placeholder">Price placeholder</span>'
@@ -29,23 +33,49 @@ export function renderProductCard({
     : available
       ? '<span class="badge badge-success">Available</span>'
       : '<span class="badge badge-neutral">Unavailable</span>';
+  const imageMarkup = imageUrl
+    ? `
+      <img class="product-card-photo" src="${escapeText(imageUrl)}"
+        alt="${escapeText(imageLabel)}" loading="lazy" data-product-image>
+      <span class="product-image-placeholder" role="img"
+        aria-label="${escapeText(imageLabel)}" data-image-fallback hidden>
+        <i class="bi bi-image" aria-hidden="true"></i>
+        <span>Image unavailable</span>
+      </span>
+    `
+    : `
+      <span class="product-image-placeholder" role="img"
+        aria-label="${escapeText(imageLabel)}">
+        <i class="bi bi-image" aria-hidden="true"></i>
+        <span>Image unavailable</span>
+      </span>
+    `;
+  const actionMarkup = actionLabel && actionHref
+    ? `
+      <a class="btn ${available === false ? 'btn-secondary' : 'btn-primary'} btn-sm"
+        href="${escapeText(actionHref)}"${available === false ? ' aria-disabled="true"' : ''}>
+        ${escapeText(actionLabel)}
+      </a>
+    `
+    : '';
 
   return `
     <article class="product-card">
       <a class="product-card-image" href="${escapeText(href)}" aria-label="View ${escapeText(title)}">
-        <span class="product-image-placeholder" role="img" aria-label="${escapeText(imageLabel)}">
-          <i class="bi bi-image" aria-hidden="true"></i>
-          <span>Image placeholder</span>
-        </span>
+        ${imageMarkup}
       </a>
       <div class="product-card-body">
-        <div class="d-flex align-items-start justify-content-between gap-3">
+        <div class="d-flex align-items-start justify-content-between gap-3 mb-2">
           <h2 class="h5 product-card-title">
             <a href="${escapeText(href)}">${escapeText(title)}</a>
           </h2>
           ${availability}
         </div>
-        ${priceMarkup}
+        ${description ? `<p class="product-card-description">${escapeText(description)}</p>` : ''}
+        <div class="product-card-footer">
+          ${priceMarkup}
+          ${actionMarkup}
+        </div>
       </div>
     </article>
   `;
