@@ -10,6 +10,7 @@ Build a genuine multi-page Art Shop System for the SoftUni "Software Technologie
 - The browser client uses the public project URL and publishable key environment variables.
 - The initial database migration creates profiles, guest/admin roles, published catalog products and images, historical orders, and order events.
 - The booking migration adds server-side order allocation and cancellation RPCs, confirmed-product exclusion, and aggregate availability.
+- The server-only demo seed script creates reversible fictional demo records, reports missing real images, and supports remote read-only dry runs.
 - Access roles and boundaries are documented in `docs/access-model.md`.
 
 ## 3. Technology and Architecture
