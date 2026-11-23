@@ -11,7 +11,7 @@
 
 ## Confirmed project state
 
-The project currently has no application tables in the `public` schema and no migration history recorded through Supabase MCP. Storage includes Supabase system tables and has no user-created buckets. No tables or policies were created as part of this access-model setup.
+The project has application tables for profiles, guest/admin roles, products, catalog images, orders, and order events. Supabase migration history contains the initial schema migration and a profile column-grant correction. Storage includes Supabase system tables and has no user-created buckets.
 
 ## Visitor
 

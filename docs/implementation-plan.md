@@ -8,9 +8,8 @@ Build a genuine multi-page Art Shop System for the SoftUni "Software Technologie
 
 - Supabase project `art-shop` is connected to reference `lskvwfxgpoorcnicttaj`.
 - The browser client uses the public project URL and publishable key environment variables.
-- The `public` schema has no application tables and Supabase reports no migrations.
+- The initial database migration creates profiles, guest/admin roles, published catalog products and images, historical orders, and order events.
 - Access roles and boundaries are documented in `docs/access-model.md`.
-- No database schema or access policies were created during this milestone.
 
 ## 3. Technology and Architecture
 
