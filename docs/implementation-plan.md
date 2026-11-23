@@ -19,6 +19,7 @@ Build a genuine multi-page Art Shop System for the SoftUni "Software Technologie
 - Admin product pages require a database-verified admin session, support create/edit/publish/deactivate operations, and delete only unreferenced records through an authorized RPC.
 - Product image management uses a dedicated public `product-images` bucket, admin-only Storage policies, generated object paths, metadata synchronization, cover fallback, and partial-failure cleanup.
 - Admin order administration uses server-side filtering/pagination and aggregation, records actor-approved cancellation reasons, and labels order value separately from revenue.
+- The art-image seed script adds public-domain Wikimedia Commons galleries to every demo product, with generated paths and rerun-safe metadata.
 - Login and registration use Supabase Auth, validate fields, preserve form values after failures, and redirect only to same-origin application destinations.
 - Access roles and boundaries are documented in `docs/access-model.md`.
 
