@@ -156,6 +156,9 @@ export function openConfirmation({
   confirmLabel = 'Confirm',
   cancelLabel = 'Cancel',
   destructive = false,
+  reasonField = false,
+  reasonLabel = 'Reason',
+  reasonRequired = false,
 } = {}) {
   return new Promise((resolve) => {
     const dialog = document.createElement('dialog');
@@ -169,6 +172,14 @@ export function openConfirmation({
         </div>
         <h2 id="confirmation-title" class="h4"></h2>
         <p id="confirmation-message"></p>
+        ${reasonField ? `
+          <div class="app-dialog-reason">
+            <label class="form-label" for="confirmation-reason"></label>
+            <textarea id="confirmation-reason" class="form-control" rows="3"
+              maxlength="500"></textarea>
+            <div class="invalid-feedback" id="confirmation-reason-error"></div>
+          </div>
+        ` : ''}
         <div class="app-dialog-actions">
           <button type="button" class="btn btn-secondary" data-dialog-cancel></button>
           <button type="button" class="btn ${destructive ? 'btn-danger' : 'btn-primary'}" data-dialog-confirm></button>
@@ -179,6 +190,10 @@ export function openConfirmation({
     dialog.querySelector('#confirmation-message').textContent = message;
     dialog.querySelector('[data-dialog-cancel]').textContent = cancelLabel;
     dialog.querySelector('[data-dialog-confirm]').textContent = confirmLabel;
+    if (reasonField) {
+      dialog.querySelector('.app-dialog-reason label').textContent = reasonLabel;
+      dialog.querySelector('#confirmation-reason').required = reasonRequired;
+    }
 
     let settled = false;
     const settle = (value) => {
@@ -190,7 +205,24 @@ export function openConfirmation({
     };
 
     dialog.querySelector('[data-dialog-cancel]').addEventListener('click', () => settle(false));
-    dialog.querySelector('[data-dialog-confirm]').addEventListener('click', () => settle(true));
+    dialog.querySelector('[data-dialog-confirm]').addEventListener('click', () => {
+      if (reasonField) {
+        const reason = dialog.querySelector('#confirmation-reason').value.trim();
+        const error = dialog.querySelector('#confirmation-reason-error');
+        if (reasonRequired && !reason) {
+          dialog.querySelector('#confirmation-reason').classList.add('is-invalid');
+          error.textContent = 'A reason is required.';
+          dialog.querySelector('#confirmation-reason').focus();
+          return;
+        }
+        settle({
+          confirmed: true,
+          reason,
+        });
+        return;
+      }
+      settle(true);
+    });
     dialog.addEventListener('cancel', (event) => {
       event.preventDefault();
       settle(false);

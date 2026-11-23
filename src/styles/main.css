@@ -922,6 +922,109 @@ select {
   gap: var(--art-space-3);
 }
 
+.app-dialog-reason {
+  margin-top: var(--art-space-4);
+  text-align: left;
+}
+
+.admin-day-picker {
+  max-width: 320px;
+  margin-bottom: var(--art-space-5);
+}
+
+.admin-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--art-space-4);
+  margin-bottom: var(--art-space-6);
+}
+
+.admin-summary-card {
+  display: grid;
+  gap: var(--art-space-2);
+  min-height: 145px;
+  align-content: center;
+  padding: var(--art-space-5);
+  border: 1px solid var(--art-color-border);
+  border-radius: var(--art-radius-md);
+  background: var(--art-color-white);
+  box-shadow: var(--art-shadow-sm);
+}
+
+.admin-summary-card span {
+  color: var(--art-color-muted);
+  font-size: 0.875rem;
+  font-weight: 750;
+}
+
+.admin-summary-card strong {
+  font-size: 1.75rem;
+}
+
+.admin-order-filters {
+  margin-bottom: var(--art-space-5);
+  padding: var(--art-space-5);
+  border: 1px solid var(--art-color-border);
+  border-radius: var(--art-radius-lg);
+  background: var(--art-color-white);
+  box-shadow: var(--art-shadow-sm);
+}
+
+.admin-orders-list {
+  display: grid;
+  gap: var(--art-space-4);
+}
+
+.admin-order-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: var(--art-space-5);
+  padding: var(--art-space-5);
+  border: 1px solid var(--art-color-border);
+  border-radius: var(--art-radius-md);
+  background: var(--art-color-white);
+  box-shadow: var(--art-shadow-sm);
+}
+
+.admin-order-side {
+  display: grid;
+  justify-items: end;
+  align-content: space-between;
+  gap: var(--art-space-3);
+  min-width: 220px;
+}
+
+.admin-order-side strong {
+  font-size: 1.25rem;
+}
+
+.admin-order-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: end;
+  gap: var(--art-space-2);
+}
+
+.admin-order-dates {
+  margin: 0;
+}
+
+.admin-order-dates div {
+  display: grid;
+  grid-template-columns: 130px 1fr;
+  gap: var(--art-space-3);
+  padding: 0.25rem 0;
+}
+
+.admin-order-dates dt {
+  color: var(--art-color-muted);
+  font-size: 0.875rem;
+}
+
+.admin-order-dates dd {
+  margin: 0;
+}
+
 .image-manager-header {
   display: flex;
   align-items: end;
@@ -1346,6 +1449,10 @@ select {
     grid-template-columns: 1fr;
   }
 
+  .admin-summary-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .image-upload-body {
     grid-template-columns: 1fr;
   }
@@ -1427,6 +1534,22 @@ select {
 
   .admin-editor-actions .btn {
     width: 100%;
+  }
+
+  .admin-summary-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-order-row {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-order-side {
+    justify-items: start;
+  }
+
+  .admin-order-actions {
+    justify-content: start;
   }
 
   .catalog-results-summary {

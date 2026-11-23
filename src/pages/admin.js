@@ -1,6 +1,6 @@
 import { initializePage } from './common.js';
 import { supabase, supabaseConfigurationError } from '../services/supabase.js';
-import { renderEmptyState } from '../components/ui.js';
+import { escapeText, formatEUR, renderEmptyState, renderSkeletonCards, showToast } from '../components/ui.js';
 
 initializePage('Administration', 'Manage the Art Shop catalog and orders.');
 
@@ -46,23 +46,65 @@ async function requireAdmin() {
 async function loadDashboard() {
   if (!await requireAdmin()) return;
   pageContent.innerHTML = `
+    <div class="admin-day-picker">
+      <label class="form-label" for="dashboard-day">Orders for day</label>
+      <input id="dashboard-day" class="form-control" type="date" value="${new Date().toISOString().slice(0, 10)}">
+    </div>
+    <div id="admin-dashboard-summary">${renderSkeletonCards(3)}</div>
     <div class="admin-dashboard-grid">
       <a class="admin-dashboard-card" href="/admin/products/">
         <span class="admin-dashboard-icon" aria-hidden="true"><i class="bi bi-palette"></i></span>
-        <div>
-          <h2 class="h4">Products</h2>
-          <p class="mb-0">Create, edit, publish, deactivate, and delete unreferenced products.</p>
-        </div>
+        <div><h2 class="h4">Products</h2><p class="mb-0">Create, edit, publish, deactivate, and delete unreferenced products.</p></div>
       </a>
       <a class="admin-dashboard-card" href="/admin/orders/">
         <span class="admin-dashboard-icon" aria-hidden="true"><i class="bi bi-receipt"></i></span>
-        <div>
-          <h2 class="h4">Orders</h2>
-          <p class="mb-0">Review and administer persisted customer orders.</p>
-        </div>
+        <div><h2 class="h4">Orders</h2><p class="mb-0">Review and administer persisted customer orders.</p></div>
       </a>
     </div>
   `;
+
+  const dayInput = document.querySelector('#dashboard-day');
+  const summary = document.querySelector('#admin-dashboard-summary');
+
+  async function loadSummary() {
+    summary.innerHTML = renderSkeletonCards(3);
+    const { data, error } = await supabase.rpc('admin_dashboard', {
+      p_day: dayInput.value || null,
+    });
+    if (error || data?.status !== 'success') {
+      summary.innerHTML = renderEmptyState({
+        title: 'Summary unavailable',
+        message: error?.message || data?.message || 'The dashboard summary could not be loaded.',
+        icon: 'bi-wifi-off',
+      });
+      showToast('Could not load dashboard summary.', { type: 'error' });
+      return;
+    }
+
+    summary.innerHTML = `
+      <div class="admin-summary-grid">
+        <article class="admin-summary-card">
+          <span>Published products</span>
+          <strong>${data.published_products}</strong>
+        </article>
+        <article class="admin-summary-card">
+          <span>Confirmed orders</span>
+          <strong>${data.confirmed_orders}</strong>
+        </article>
+        <article class="admin-summary-card">
+          <span>Confirmed order value</span>
+          <strong>${formatEUR(data.confirmed_order_value)}</strong>
+        </article>
+        <article class="admin-summary-card">
+          <span>Orders for ${escapeText(data.selected_day)}</span>
+          <strong>${data.orders_for_day}</strong>
+        </article>
+      </div>
+    `;
+  }
+
+  dayInput.addEventListener('change', loadSummary);
+  await loadSummary();
 }
 
 loadDashboard();
