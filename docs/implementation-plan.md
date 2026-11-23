@@ -6,9 +6,11 @@ Build a genuine multi-page Art Shop System for the SoftUni "Software Technologie
 
 ## 2. Current Repository State
 
-- The repository contains only `README.md`.
-- No application source, package manifest, database migrations, or deployment configuration exists yet.
-- The branch is clean and ready for incremental implementation.
+- Supabase project `art-shop` is connected to reference `lskvwfxgpoorcnicttaj`.
+- The browser client uses the public project URL and publishable key environment variables.
+- The `public` schema has no application tables and Supabase reports no migrations.
+- Access roles and boundaries are documented in `docs/access-model.md`.
+- No database schema or access policies were created during this milestone.
 
 ## 3. Technology and Architecture
 
