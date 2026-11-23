@@ -922,6 +922,36 @@ select {
   gap: var(--art-space-3);
 }
 
+.auth-layout {
+  display: grid;
+  min-height: 420px;
+  place-items: center;
+}
+
+.auth-card {
+  width: min(480px, 100%);
+  padding: var(--art-space-6);
+  border: 1px solid var(--art-color-border);
+  border-radius: var(--art-radius-lg);
+  background: var(--art-color-white);
+  box-shadow: var(--art-shadow-md);
+}
+
+.auth-card > p.text-secondary {
+  margin-bottom: var(--art-space-5);
+}
+
+.auth-switch {
+  margin-top: var(--art-space-4);
+  color: var(--art-color-muted);
+  text-align: center;
+}
+
+.auth-switch a {
+  color: var(--art-color-accent);
+  font-weight: 750;
+}
+
 .app-dialog-reason {
   margin-top: var(--art-space-4);
   text-align: left;

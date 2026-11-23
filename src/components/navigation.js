@@ -2,7 +2,14 @@ let navigationState = { authenticated: false };
 
 export function setNavigationState(nextState = {}) {
   navigationState = { authenticated: false, ...nextState };
-  document.querySelectorAll('[data-auth-navigation]').forEach((node) => node.remove());
+  document.querySelectorAll('[data-auth-navigation]').forEach((node) => {
+    node.innerHTML = navigationState.authenticated
+      ? '<button class="btn btn-outline-dark btn-sm" type="button" data-logout>Logout</button>'
+      : `
+        <a class="btn btn-ghost btn-sm" href="/login/">Login</a>
+        <a class="btn btn-primary btn-sm" href="/register/">Register</a>
+      `;
+  });
 }
 
 export function renderNavigation(state = navigationState) {
