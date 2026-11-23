@@ -78,6 +78,11 @@ Deliver:
 - Accessibly structured base pages and responsive navigation.
 - Environment variable documentation with no real credentials.
 - Initial implementation documentation and `.gitignore`.
+- Reusable responsive header, footer, page shell, product card, button, badge,
+  form, skeleton, empty-state, confirmation-dialog, and toast primitives.
+- Public navigation for Home, Products, Login, and Register.
+- Authenticated navigation for My Orders, Account, and Logout; no admin route
+  link until server-backed role checking is implemented.
 
 Acceptance criteria:
 
