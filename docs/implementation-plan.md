@@ -25,25 +25,29 @@ Build a genuine multi-page Art Shop System for the SoftUni "Software Technologie
 
 Use separate Vite HTML entry files rather than client-side routing. Shared behavior will live in reusable modules under `src/`.
 
-Initial structure:
+Milestone 1 initial structure:
 
 ```text
 index.html
-products.html
-product.html
-cart.html
-checkout.html
-login.html
-register.html
-orders.html
+products/index.html
+product/index.html
+login/index.html
+register/index.html
+order/index.html
+order-confirmation/index.html
+my-orders/index.html
+order-details/index.html
+account/index.html
 admin/
   index.html
-  products.html
-  orders.html
+  products/index.html
+  product-edit/index.html
+  images/index.html
+  orders/index.html
 src/
   components/
   services/
-  utilities/
+  utils/
   styles/
 supabase/
   migrations/
