@@ -364,6 +364,113 @@ select {
   margin-bottom: var(--art-space-6);
 }
 
+.product-detail-breadcrumb {
+  margin-bottom: var(--art-space-5);
+}
+
+.product-detail-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(280px, 0.85fr);
+  gap: var(--art-space-7);
+  align-items: start;
+}
+
+.product-detail-gallery {
+  min-width: 0;
+}
+
+.product-detail-frame {
+  overflow: hidden;
+  width: 100%;
+  min-height: 360px;
+  border: 1px solid var(--art-color-border);
+  border-radius: var(--art-radius-lg);
+  background: var(--art-color-subtle);
+  box-shadow: var(--art-shadow-sm);
+}
+
+.product-detail-main-image {
+  display: block;
+  width: 100%;
+  min-height: 360px;
+  aspect-ratio: 4 / 3;
+  object-fit: contain;
+  background: var(--art-color-white);
+}
+
+.product-gallery-thumbnails {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--art-space-3);
+  margin-top: var(--art-space-3);
+}
+
+.product-gallery-thumbnail {
+  overflow: hidden;
+  width: 72px;
+  height: 72px;
+  padding: 0;
+  border: 2px solid transparent;
+  border-radius: var(--art-radius-sm);
+  background: var(--art-color-white);
+}
+
+.product-gallery-thumbnail.active,
+.product-gallery-thumbnail:focus-visible {
+  border-color: var(--art-color-accent);
+}
+
+.product-gallery-thumbnail img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.product-detail-summary {
+  padding: var(--art-space-5);
+  border: 1px solid var(--art-color-border);
+  border-radius: var(--art-radius-lg);
+  background: var(--art-color-white);
+  box-shadow: var(--art-shadow-sm);
+}
+
+.product-detail-title {
+  margin: 0 0 var(--art-space-3);
+  font-family: var(--art-font-serif);
+  font-size: clamp(2rem, 4vw, 3.25rem);
+  line-height: 1.05;
+}
+
+.product-detail-status {
+  margin-bottom: var(--art-space-5);
+}
+
+.product-detail-description {
+  color: var(--art-color-muted);
+  line-height: 1.7;
+}
+
+.product-detail-price {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: var(--art-space-4);
+  margin: var(--art-space-5) 0;
+  padding-top: var(--art-space-5);
+  border-top: 1px solid var(--art-color-border);
+}
+
+.product-detail-price span {
+  color: var(--art-color-muted);
+  font-size: 0.875rem;
+  font-weight: 750;
+}
+
+.product-detail-price strong {
+  font-size: 1.75rem;
+  line-height: 1;
+}
+
 .catalog-results-summary {
   display: flex;
   align-items: center;
@@ -648,6 +755,10 @@ select {
 @media (max-width: 991.98px) {
   .site-header .navbar {
     min-height: 66px;
+  }
+
+  .product-detail-layout {
+    grid-template-columns: 1fr;
   }
 
   .navbar-collapse {
