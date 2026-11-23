@@ -8,7 +8,8 @@
     "build": "vite build",
     "preview": "vite preview",
     "seed:demo": "node scripts/seed-demo.mjs",
-    "seed:demo:dry": "node scripts/seed-demo.mjs --dry-run"
+    "seed:demo:dry": "node scripts/seed-demo.mjs --dry-run",
+    "bootstrap:first-admin": "node scripts/bootstrap-first-admin.mjs"
   },
   "keywords": [],
   "author": "",

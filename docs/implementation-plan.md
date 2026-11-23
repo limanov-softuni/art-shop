@@ -16,6 +16,7 @@ Build a genuine multi-page Art Shop System for the SoftUni "Software Technologie
 - The product-details page loads only active publications, presents a safe gallery and current EUR price, disables unavailable orders, and preserves search context across login/order navigation.
 - The order and confirmation pages require authentication, preserve request/draft state, reconcile timed-out submissions, and verify persisted authorized orders.
 - My Orders and Order Details restrict reads to the authenticated owner or authorized admin, use deterministic server pagination, and cancel only through the protected RPC.
+- Admin product pages require a database-verified admin session, support create/edit/publish/deactivate operations, and delete only unreferenced records through an authorized RPC.
 - Access roles and boundaries are documented in `docs/access-model.md`.
 
 ## 3. Technology and Architecture
