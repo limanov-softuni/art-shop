@@ -14,6 +14,7 @@ Build a genuine multi-page Art Shop System for the SoftUni "Software Technologie
 - The public Home page loads active Supabase products, supports name search, shows aggregate availability, and provides responsive shared product cards.
 - The Products search-results page applies validated filters, sorting, aggregate availability, and server-side pagination to the complete active catalog.
 - The product-details page loads only active publications, presents a safe gallery and current EUR price, disables unavailable orders, and preserves search context across login/order navigation.
+- The order and confirmation pages require authentication, preserve request/draft state, reconcile timed-out submissions, and verify persisted authorized orders.
 - Access roles and boundaries are documented in `docs/access-model.md`.
 
 ## 3. Technology and Architecture
