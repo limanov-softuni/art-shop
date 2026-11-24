@@ -2,6 +2,19 @@ let navigationState = { authenticated: false };
 
 export function setNavigationState(nextState = {}) {
   navigationState = { authenticated: false, ...nextState };
+  const currentPath = window.location.pathname.replace(/\/+$/, '') || '/';
+  document.querySelectorAll('[data-auth-my-orders]').forEach((node) => {
+    node.hidden = !navigationState.authenticated;
+    node.innerHTML = navigationState.authenticated
+      ? `<a class="nav-link${currentPath === '/my-orders' ? ' active' : ''}" href="/my-orders/"${currentPath === '/my-orders' ? ' aria-current="page"' : ''}>My Orders</a>`
+      : '';
+  });
+  document.querySelectorAll('[data-auth-account]').forEach((node) => {
+    node.hidden = !navigationState.authenticated;
+    node.innerHTML = navigationState.authenticated
+      ? `<a class="nav-link${currentPath === '/account' ? ' active' : ''}" href="/account/"${currentPath === '/account' ? ' aria-current="page"' : ''}>Account</a>`
+      : '';
+  });
   document.querySelectorAll('[data-auth-navigation]').forEach((node) => {
     node.innerHTML = navigationState.authenticated
       ? '<button class="btn btn-outline-dark btn-sm" type="button" data-logout>Logout</button>'
@@ -50,7 +63,12 @@ export function renderNavigation(state = navigationState) {
           <div class="collapse navbar-collapse" id="primaryNav">
             <ul class="navbar-nav mx-lg-auto mb-3 mb-lg-0">
               ${publicLinks}
-              ${navigationState.authenticated ? authenticatedLinks : ''}
+              ${navigationState.authenticated
+                ? authenticatedLinks
+                : `
+                  <li class="nav-item" data-auth-my-orders hidden></li>
+                  <li class="nav-item" data-auth-account hidden></li>
+                `}
             </ul>
             <div class="d-flex align-items-center gap-2" data-auth-navigation>
               ${navigationState.authenticated

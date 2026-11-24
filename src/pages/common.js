@@ -17,7 +17,15 @@ async function syncAuthNavigation() {
 
   const { data } = await supabase.auth.getSession();
   setNavigationState({ authenticated: Boolean(data?.session) });
+  attachLogoutHandlers();
 
+  supabase.auth.onAuthStateChange((_event, session) => {
+    setNavigationState({ authenticated: Boolean(session) });
+    attachLogoutHandlers();
+  });
+}
+
+function attachLogoutHandlers() {
   document.querySelectorAll('[data-logout]').forEach((button) => {
     button.addEventListener('click', async () => {
       await supabase.auth.signOut();
