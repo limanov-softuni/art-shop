@@ -16,23 +16,39 @@ async function syncAuthNavigation() {
   if (!supabase) return;
 
   const { data } = await supabase.auth.getSession();
-  setNavigationState({ authenticated: Boolean(data?.session) });
-  setFooterAuthLinks(Boolean(data?.session));
+  await applySessionNavigation(data?.session ?? null);
   attachLogoutHandlers();
 
-  supabase.auth.onAuthStateChange((_event, session) => {
-    setNavigationState({ authenticated: Boolean(session) });
-    setFooterAuthLinks(Boolean(session));
+  supabase.auth.onAuthStateChange(async (_event, session) => {
+    await applySessionNavigation(session);
     attachLogoutHandlers();
   });
 }
 
-function setFooterAuthLinks(authenticated) {
+async function applySessionNavigation(session) {
+  const authenticated = Boolean(session);
+  let admin = false;
+
+  if (authenticated) {
+    const { data: role } = await supabase
+      .from('user_roles')
+      .select('role')
+      .eq('user_id', session.user.id)
+      .maybeSingle();
+    admin = role?.role === 'admin';
+  }
+
+  setNavigationState({ authenticated, admin });
+  setFooterAuthLinks(authenticated, admin);
+}
+
+function setFooterAuthLinks(authenticated, admin = false) {
   document.querySelectorAll('[data-footer-auth-links]').forEach((container) => {
     container.innerHTML = authenticated
       ? `
         <a href="/my-orders/">My Orders</a>
         <a href="/account/">Account</a>
+        ${admin ? '<a href="/admin/">Administration</a>' : ''}
       `
       : `
         <a href="/login/">Login</a>
