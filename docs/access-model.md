@@ -11,7 +11,7 @@
 
 ## Confirmed project state
 
-The project has application tables for profiles, customer/admin roles, products, catalog images, orders, and order events. Supabase migration history contains the initial schema migration and a profile column-grant correction. Storage includes Supabase system tables and has no user-created buckets.
+The project has application tables for profiles, database guest/admin roles, products, catalog images, orders, and order events. The database role value `guest` represents a registered customer-facing account. The project also has a public `product-images` Storage bucket and migration history for catalog search, booking, image management, administration and completed-order states.
 
 ## Visitor
 
@@ -21,7 +21,7 @@ Visitors may:
 
 - Read published products.
 - Read catalog images and other intentionally public product media.
-- Search and read aggregate inventory availability.
+- Search and read aggregate product availability.
 - Browse public catalog information.
 
 Visitors may not:
@@ -38,15 +38,15 @@ A customer is a visitor who has registered and signed in through Supabase Auth.
 Customers inherit all visitor permissions and may additionally:
 
 - Read and update only permitted fields of their own profile.
-- Create orders through an authorized database operation that validates ownership and inventory.
-- Read only their own orders and order items.
-- Cancel their own cancellable orders through an authorized database operation that validates state and restores inventory safely.
+- Create orders through an authorized database operation that validates ownership and physical-product availability.
+- Read only their own orders.
+- Cancel their own cancellable orders through an authorized database operation that validates state and releases the physical product safely.
 
 Customers may not:
 
 - Read another customer's profile or orders.
 - Update protected profile fields or administrator fields.
-- Change order items or state by direct privileged table access.
+- Change order rows or state by direct privileged table access.
 - Perform administration through a browser-only role flag.
 
 ## Admin
@@ -66,9 +66,9 @@ Admins may not rely on direct browser role values for authorization. Database RL
 
 - Public catalog and availability reads should use narrowly scoped application queries.
 - Profile and order ownership must be derived from the authenticated Supabase user identity.
-- Order creation and cancellation must eventually use authorized database operations that enforce inventory and state transitions atomically.
-- Product and image administration must eventually require database-backed admin authorization.
-- This document describes intended access only. It does not grant access or create permissive policies.
+- Order creation and cancellation use authorized database operations that enforce ownership, availability and state transitions atomically.
+- Product and image administration is enforced by database-backed admin authorization.
+- This document describes the implemented access model and does not create additional privileges.
 
 ## Booking operations
 
@@ -78,3 +78,4 @@ Admins may not rely on direct browser role values for authorization. Database RL
 - Cancellation is handled only through `public.cancel_order`. The owner may cancel only within 24 hours after placement; after that deadline, the order is processed and the owner cannot cancel it. Admins may cancel supported orders regardless of age.
 - Cancellation preserves the order row, sets a server timestamp, and records one server-generated cancellation event.
 - Repeated cancellation returns an idempotent already-cancelled result.
+- A confirmed order is marked `completed` only through the admin `complete_order` operation after shipment. Completed orders are terminal and remain unavailable.

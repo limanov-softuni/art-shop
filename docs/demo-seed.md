@@ -54,4 +54,4 @@ $env:DEMO_CUSTOMER_PASSWORD="<initial-customer-password>"
 npm.cmd run seed:demo
 ```
 
-The script reports created and skipped counts. Reruns reuse existing Auth accounts and seed records by exact email, product name, and order reference. Existing passwords are not changed, existing admin status is preserved, customer users are assigned only a missing customer role, and unrelated database records are not reset or deleted.
+The script reports created and skipped counts. Reruns reuse existing Auth accounts and seed records by exact email, product name, and order reference. Existing passwords are not changed, existing admin status is preserved, and the demo's database role remains `guest` for customer accounts. Unrelated database records are not reset or deleted.

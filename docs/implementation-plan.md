@@ -8,7 +8,7 @@ Build a genuine multi-page Art Shop System for the SoftUni "Software Technologie
 
 - Supabase project `art-shop` is connected to reference `lskvwfxgpoorcnicttaj`.
 - The browser client uses the public project URL and publishable key environment variables.
-- The initial database migration creates profiles, customer/admin roles, published catalog products and images, historical orders, and order events.
+- The initial database migration creates profiles, database guest/admin roles, published catalog products and images, historical orders, and order events. The database `guest` role represents a registered customer account in application terminology.
 - The booking migration adds server-side order allocation and cancellation RPCs, confirmed-product exclusion, and aggregate availability.
 - The server-only demo seed script creates reversible fictional demo records, reports missing real images, and supports remote read-only dry runs.
 - The public Home page loads active Supabase products, supports name search, shows aggregate availability, and provides responsive shared product cards.
@@ -112,8 +112,8 @@ Acceptance criteria:
 
 Deliver:
 
-- Committed Supabase migration for products, inventory, profiles, orders, order items, and admin roles.
-- Database constraints for positive prices and quantities, valid inventory, and valid order state transitions.
+- Committed Supabase migrations for products, profiles, orders, order events, order state, catalog images and admin roles.
+- Database constraints for positive prices, valid physical-product allocation, and valid order state transitions.
 - RLS policies for public product browsing and role/user-specific order access.
 - Policies that restrict product and order administration to authorized admins.
 - Seed data only through migration-safe, non-production sample records.
@@ -161,25 +161,24 @@ Acceptance criteria:
 - Password and account data are never logged or stored in custom browser code.
 - Auth UI is accessible and usable at mobile widths.
 
-### Milestone 5: Cart and Checkout
+### Milestone 5: Checkout and Physical Product Allocation
 
 Deliver:
 
-- Multi-product cart with quantity controls.
-- Inventory validation for available quantities.
-- Checkout page for EUR totals and PayPal payment initiation.
-- Server/database-enforced atomic order creation and inventory reservation or update.
-- Immediate confirmation after successful available-inventory payment/order handling.
-- Safe PayPal configuration from environment values and documented serverless or provider-supported integration behavior.
+- One physical product per order.
+- Availability validation for the selected physical product.
+- Checkout page for EUR totals and payment-provider explanation.
+- Server/database-enforced atomic order creation and physical-product allocation.
+- Re-quote handling when the server-side EUR price differs from the displayed quote.
+- Optional PayPal integration may be added later; no payment or revenue state is currently tracked.
 
 Acceptance criteria:
 
-- A cart may contain multiple products and quantities.
-- The database rejects overselling and inconsistent order items.
-- Only confirmed, inventory-valid orders are created.
-- EUR totals are consistent from database prices.
-- Browser code contains no secret PayPal credentials.
-- Payment success and failure states are explicit and recoverable.
+- One product can have only one confirmed or completed order.
+- The database rejects unavailable or overlapping allocations.
+- Only confirmed, server-priced, active-product orders are created.
+- EUR totals are calculated server-side from the current numeric product price.
+- Browser code contains no PayPal or service-role credentials.
 
 ### Milestone 6: Customer Orders
 
@@ -187,14 +186,14 @@ Deliver:
 
 - Order history for the signed-in customer.
 - Order detail view.
-- Order cancellation within allowed state and inventory rules.
+- Order cancellation within the allowed 24-hour state and availability rules.
 - Cancellation confirmation and clear state changes.
 
 Acceptance criteria:
 
 - Customers see only their own orders.
 - Database policies and constraints enforce ownership and state transitions.
-- Cancellable inventory is restored safely without negative stock.
+- Cancellation restores the physical product to available state only through the authorized operation.
 - Cancelled orders cannot be cancelled repeatedly.
 
 ### Milestone 7: Administration
@@ -246,8 +245,8 @@ Do not force-push or rewrite existing history. Do not invent deployment URLs, cr
 
 ## 6. Verification and API Policy
 
-- Verify Supabase, Vite, Bootstrap, and PayPal APIs against official version-specific documentation.
+- Verify Supabase, Vite and Bootstrap APIs against official version-specific documentation.
 - Treat browser SDK behavior and database behavior as two separate concerns.
-- Prefer database functions or RLS-backed operations for inventory and booking integrity.
+- Prefer database functions or RLS-backed operations for allocation and booking integrity.
 - Check the configured package versions before selecting APIs or option names.
 - Report unavailable external services or unverified integrations honestly.

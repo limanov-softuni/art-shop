@@ -1,6 +1,6 @@
 # Art Product Image Seed
 
-The image seed uses public-domain image data and IIIF images from the Art Institute of Chicago.
+The image seed searches Wikimedia Commons for public-domain or freely licensed artwork metadata and downloadable thumbnails.
 
 It creates up to three generated Storage objects per seeded product, with generated UUID paths under:
 

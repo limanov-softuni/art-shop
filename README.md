@@ -139,7 +139,7 @@ Key relationships and rules:
 
 - `profiles.id` references `auth.users.id`.
 - `user_roles.user_id` references `auth.users.id`; one role row is allowed per user.
-- `user_roles.role` distinguishes customer accounts from administrators.
+- `user_roles.role` is constrained to `guest` or `admin`; the database value `guest` represents a registered customer account.
 - `products` has non-negative EUR prices and an active/publication flag.
 - `product_images.product_id` uses restricted deletion so catalog records retain image integrity.
 - `orders.product_id` and `orders.user_id` use restricted deletion, preserving historical order and catalog relationships.
