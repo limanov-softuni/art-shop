@@ -189,7 +189,7 @@ async function loadOrderDetails() {
         <section class="order-cancellation-card" aria-labelledby="cancellation-heading">
           <h2 id="cancellation-heading" class="h5">Cancellation eligibility</h2>
           ${order.status === 'cancelled'
-            ? '<p class="mb-0 text-secondary">This order is already cancelled. Repeated cancellation is safe.</p>'
+            ? '<p class="mb-0 text-secondary">This order is already cancelled.</p>'
             : canCancelAsGuest
               ? '<p class="mb-3">This order is eligible for cancellation through your account.</p><button id="cancel-order" class="btn btn-danger w-100" type="button">Cancel order</button>'
               : `<p class="mb-0">The 24-hour cancellation window has closed. This order will be processed.</p><p class="small text-secondary mb-0 mt-2">Cancellation deadline: ${escapeText(cancellationAt.toLocaleString())}</p>`}
