@@ -41,6 +41,7 @@ function readAndValidateParams() {
   const q = (params.get('q') ?? '').trim();
   const destination = (params.get('destination') ?? params.get('type') ?? '').trim();
   const maxPriceRaw = (params.get('maxPrice') ?? '').trim();
+  const availability = (params.get('availability') ?? 'all').trim();
   const sort = params.get('sort') ?? 'name_asc';
   const pageRaw = params.get('page') ?? '1';
   const errors = [];
@@ -56,6 +57,9 @@ function readAndValidateParams() {
       || Number(maxPriceRaw) > 100000) {
       errors.push('Maximum price must be EUR 0-100000 with up to two decimal places.');
     }
+    if (!['all', 'available', 'unavailable'].includes(availability)) {
+      errors.push('Availability filter is invalid.');
+    }
   }
   if (!sortOptions.some(([value]) => value === sort)) {
     errors.push('Sort option is not supported.');
@@ -69,6 +73,7 @@ function readAndValidateParams() {
     destination,
     maxPrice: maxPriceRaw ? Number(maxPriceRaw) : null,
     maxPriceRaw,
+    availability,
     sort,
     page: Number(pageRaw),
     errors,
@@ -82,6 +87,7 @@ function buildSearchContext() {
   if (state.q) params.set('q', state.q);
   if (state.destination) params.set('destination', state.destination);
   if (state.maxPriceRaw) params.set('maxPrice', state.maxPriceRaw);
+  if (state.availability !== 'all') params.set('availability', state.availability);
   params.set('sort', state.sort);
   params.set('page', String(state.page));
   return `${window.location.pathname}?${params.toString()}`;
@@ -92,6 +98,7 @@ function buildPageUrl(page) {
   if (state.q) params.set('q', state.q);
   if (state.destination) params.set('destination', state.destination);
   if (state.maxPriceRaw) params.set('maxPrice', state.maxPriceRaw);
+  if (state.availability !== 'all') params.set('availability', state.availability);
   params.set('sort', state.sort);
   params.set('page', String(page));
   return `/products/?${params.toString()}`;
@@ -147,6 +154,16 @@ pageContent.innerHTML = `
             value="${escapeText(state.maxPriceRaw)}">
         </div>
       </div>
+      <div class="col-12 col-sm-6 col-lg-2">
+        <label class="form-label" for="search-availability">Availability</label>
+        <select id="search-availability" class="form-select" name="availability">
+          ${[['all', 'All'], ['available', 'Available'], ['unavailable', 'Unavailable']].map(([value, label]) => `
+            <option value="${value}"${state.availability === value ? ' selected' : ''}>
+              ${label}
+            </option>
+          `).join('')}
+        </select>
+      </div>
       <div class="col-12 col-sm-6 col-lg-3">
         <label class="form-label" for="search-sort">Sort</label>
         <select id="search-sort" class="form-select" name="sort">
@@ -178,11 +195,13 @@ searchForm.addEventListener('submit', (event) => {
   const q = String(formData.get('q') ?? '').trim();
   const destination = String(formData.get('destination') ?? '').trim();
   const maxPrice = String(formData.get('maxPrice') ?? '').trim();
+  const availability = String(formData.get('availability') ?? 'all');
   const sort = String(formData.get('sort') ?? 'name_asc');
 
   if (q) params.set('q', q);
   if (destination) params.set('destination', destination);
   if (maxPrice) params.set('maxPrice', maxPrice);
+  if (availability !== 'all') params.set('availability', availability);
   params.set('sort', sort);
   params.set('page', '1');
 
@@ -276,23 +295,29 @@ async function loadResults() {
 
   resultsContainer.innerHTML = renderSkeletonCards(6);
 
-  let countQuery = supabase
-    .from('products')
-    .select('id', { count: 'exact', head: true });
-  countQuery = applyCatalogFilters(countQuery);
+  const { data, error } = await supabase.rpc('search_catalog', {
+    p_search: state.q || null,
+    p_destination: state.destination || null,
+    p_max_price: state.maxPrice,
+    p_availability: state.availability,
+    p_sort: state.sort,
+    p_page: state.page,
+    p_page_size: pageSize,
+  });
 
-  const { count, error: countError } = await countQuery;
-  if (countError) {
+  if (error || data?.status !== 'success') {
     resultsContainer.innerHTML = renderEmptyState({
       title: 'Search unavailable',
-      message: 'We could not count matching products. Please try again.',
+      message: error?.message || data?.message || 'We could not load matching products.',
       icon: 'bi-wifi-off',
     });
     showToast('Could not load search results.', { type: 'error' });
     return;
   }
 
-  const totalCount = count ?? 0;
+  const totalCount = data.total_count ?? 0;
+  const availableCount = data.available_count ?? 0;
+  const unavailableCount = data.unavailable_count ?? 0;
   const pageCount = Math.max(1, Math.ceil(totalCount / pageSize));
   if (totalCount > 0 && state.page > pageCount) {
     resultsContainer.innerHTML = `
@@ -317,72 +342,7 @@ async function loadResults() {
 
   const from = (state.page - 1) * pageSize;
   const to = from + pageSize - 1;
-  let resultsQuery = supabase
-    .from('products')
-    .select(`
-      id,
-      name,
-      description,
-      price,
-      is_active,
-      product_images (
-        id,
-        storage_path,
-        alt_text,
-        position,
-        is_cover
-      )
-    `);
-  resultsQuery = applyCatalogFilters(resultsQuery).range(from, to);
-
-  const { data: products, error: resultsError } = await resultsQuery;
-  if (resultsError) {
-    resultsContainer.innerHTML = renderEmptyState({
-      title: 'Search unavailable',
-      message: 'We could not load matching products. Please try again.',
-      icon: 'bi-wifi-off',
-    });
-    showToast('Could not load search results.', { type: 'error' });
-    return;
-  }
-
-  let matchingIdsQuery = supabase
-    .from('products')
-    .select('id');
-  matchingIdsQuery = applyCatalogFilters(matchingIdsQuery);
-  const { data: matchingIds, error: idsError } = await matchingIdsQuery;
-  if (idsError) {
-    resultsContainer.innerHTML = renderEmptyState({
-      title: 'Search unavailable',
-      message: 'We could not calculate the availability summary.',
-      icon: 'bi-wifi-off',
-    });
-    return;
-  }
-
-  const ids = (matchingIds ?? []).map((product) => product.id);
-  const availabilityById = new Map();
-  if (ids.length > 0) {
-    const { data: availabilityRows, error: availabilityError } = await supabase.rpc(
-      'get_products_availability',
-      { p_product_ids: ids }
-    );
-    if (availabilityError) {
-      resultsContainer.innerHTML = renderEmptyState({
-        title: 'Availability unavailable',
-        message: 'Products loaded, but availability could not be verified.',
-        icon: 'bi-wifi-off',
-      });
-      return;
-    }
-    availabilityRows?.forEach((row) => {
-      availabilityById.set(row.product_id, row.is_available);
-    });
-  }
-
-  const availableCount = [...availabilityById.values()]
-    .filter((isAvailable) => isAvailable).length;
-  const unavailableCount = totalCount - availableCount;
+  const products = data.products ?? [];
   const firstResult = from + 1;
   const lastResult = Math.min(to + 1, totalCount);
   const searchContext = buildSearchContext();
@@ -406,7 +366,7 @@ async function loadResults() {
           .find((image) => image.is_cover)
           ?? [...(product.product_images ?? [])]
             .sort((a, b) => (a.position ?? 0) - (b.position ?? 0))[0];
-        const available = availabilityById.get(product.id) === true;
+        const available = product.is_available === true;
         const returnContext = encodeURIComponent(searchContext);
 
         return `
