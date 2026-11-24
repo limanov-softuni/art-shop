@@ -147,6 +147,10 @@ async function loadProducts() {
             <div class="admin-product-actions">
               <a class="btn btn-secondary btn-sm"
                 href="/admin/product-edit/?id=${encodeURIComponent(product.id)}">Edit</a>
+              <a class="btn btn-primary btn-sm"
+                href="/admin/images/?productId=${encodeURIComponent(product.id)}">
+                <i class="bi bi-images me-1" aria-hidden="true"></i>Manage images
+              </a>
               <button class="btn btn-ghost btn-sm" type="button"
                 data-toggle-product="${escapeText(product.id)}"
                 data-active="${product.is_active ? 'true' : 'false'}">

@@ -176,7 +176,14 @@ async function loadEditor() {
         <p class="eyebrow mb-2">${product ? 'Edit product' : 'Create product'}</p>
         <h2 class="h3 mb-0">${product ? escapeText(product.name) : 'New product'}</h2>
       </div>
-      <a class="btn btn-secondary" href="/admin/products/">Back to products</a>
+      <div class="d-flex flex-wrap gap-2">
+        ${product
+          ? `<a class="btn btn-primary" href="/admin/images/?productId=${encodeURIComponent(product.id)}&return=${encodeURIComponent(`/admin/product-edit/?id=${product.id}`)}">
+              <i class="bi bi-images me-2" aria-hidden="true"></i>Manage images
+            </a>`
+          : ''}
+        <a class="btn btn-secondary" href="/admin/products/">Back to products</a>
+      </div>
     </div>
     <form id="admin-product-form" class="admin-product-form" novalidate>
       <div class="mb-3">

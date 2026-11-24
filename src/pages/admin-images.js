@@ -97,6 +97,7 @@ async function loadImageManager() {
   }
 
   const requestedId = new URLSearchParams(window.location.search).get('productId')?.trim() ?? '';
+  const returnContext = new URLSearchParams(window.location.search).get('return')?.trim() ?? '';
   const selectedId = products?.some((product) => product.id === requestedId)
     ? requestedId
     : products?.[0]?.id ?? '';
@@ -107,7 +108,10 @@ async function loadImageManager() {
         <p class="eyebrow mb-2">Catalog assets</p>
         <h2 class="h3 mb-0">Product images</h2>
       </div>
-      <a class="btn btn-secondary" href="/admin/products/">Back to products</a>
+      <a class="btn btn-secondary"
+        href="${returnContext && returnContext.startsWith('/admin/product-edit/') ? escapeText(returnContext) : '/admin/products/'}">
+        ${returnContext && returnContext.startsWith('/admin/product-edit/') ? 'Back to product' : 'Back to products'}
+      </a>
     </div>
     <div class="image-manager-controls">
       <label class="form-label" for="image-product-select">Product</label>
