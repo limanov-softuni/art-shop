@@ -1,5 +1,6 @@
 import { initializePage } from './common.js';
 import { supabase, supabaseConfigurationError } from '../services/supabase.js';
+import { getProductImagePublicUrl } from '../utils/storage-images.js';
 import {
   escapeText,
   renderEmptyState,
@@ -102,13 +103,7 @@ function publicImageUrl(product) {
     ?? [...images].sort((a, b) => (a.position ?? 0) - (b.position ?? 0))[0];
   if (!cover?.storage_path) return null;
 
-  const bucket = import.meta.env.VITE_SUPABASE_CATALOG_BUCKET;
-  if (!bucket || !supabase) return null;
-
-  const { data } = supabase.storage
-    .from(bucket)
-    .getPublicUrl(cover.storage_path);
-  return data?.publicUrl || null;
+  return getProductImagePublicUrl(supabase, cover.storage_path);
 }
 
 function installImageFallbacks(container) {

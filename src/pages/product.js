@@ -1,5 +1,6 @@
 import { initializePage } from './common.js';
 import { supabase, supabaseConfigurationError } from '../services/supabase.js';
+import { getProductImagePublicUrl } from '../utils/storage-images.js';
 import {
   escapeText,
   formatEUR,
@@ -60,13 +61,7 @@ function buildLoginUrl(productId) {
 }
 
 function publicImageUrl(storagePath) {
-  if (!storagePath || !supabase) return null;
-  const bucket = import.meta.env.VITE_SUPABASE_CATALOG_BUCKET;
-  if (!bucket) return null;
-  const { data } = supabase.storage
-    .from(bucket)
-    .getPublicUrl(storagePath);
-  return data?.publicUrl || null;
+  return getProductImagePublicUrl(supabase, storagePath);
 }
 
 function installGallery(container) {
