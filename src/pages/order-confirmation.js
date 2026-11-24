@@ -103,7 +103,7 @@ async function loadConfirmation() {
     return;
   }
 
-  if (order.status !== 'confirmed') {
+  if (!['confirmed', 'completed'].includes(order.status)) {
     pageContent.innerHTML = `
       <div class="empty-state" role="status">
         <span class="empty-state-icon" aria-hidden="true"><i class="bi bi-clock-history"></i></span>
@@ -147,7 +147,7 @@ async function loadConfirmation() {
       <div class="confirmation-success">
         <span class="confirmation-icon" aria-hidden="true"><i class="bi bi-check-lg"></i></span>
         <div>
-          <p class="eyebrow mb-2">Confirmed order</p>
+          <p class="eyebrow mb-2">${order.status === 'completed' ? 'Completed order' : 'Confirmed order'}</p>
           <h2 class="h3 mb-1">${escapeText(order.reference)}</h2>
           <p class="mb-0 text-secondary">This confirmation was loaded from the authorized persisted order.</p>
         </div>
@@ -169,7 +169,7 @@ async function loadConfirmation() {
             <strong>${formatEUR(order.total_price)}</strong>
           </div>
           <dl class="confirmation-details">
-            <div><dt>Status</dt><dd>Confirmed</dd></div>
+            <div><dt>Status</dt><dd>${order.status === 'completed' ? 'Completed' : 'Confirmed'}</dd></div>
             <div><dt>Client</dt><dd>${escapeText(order.client_name)}</dd></div>
             <div><dt>Phone</dt><dd>${escapeText(order.contact_phone || 'Not provided')}</dd></div>
             <div><dt>Special requests</dt><dd>${escapeText(order.special_requests || 'None')}</dd></div>

@@ -168,7 +168,7 @@ async function loadOrderDetails() {
           <h2 id="order-summary-heading" class="h3">${escapeText(order.product_name_snapshot)}</h2>
           <div class="order-detail-status">
             <span class="badge ${order.status === 'confirmed' ? 'badge-success' : 'badge-neutral'}">
-              ${order.status === 'confirmed' ? 'Confirmed' : 'Cancelled'}
+              ${order.status === 'confirmed' ? 'Confirmed' : order.status === 'completed' ? 'Completed' : 'Cancelled'}
             </span>
           </div>
           <p class="text-secondary">Confirmed is an order state, not a completed order.</p>
@@ -190,6 +190,8 @@ async function loadOrderDetails() {
           <h2 id="cancellation-heading" class="h5">Cancellation eligibility</h2>
           ${order.status === 'cancelled'
             ? '<p class="mb-0 text-secondary">This order is already cancelled.</p>'
+            : order.status === 'completed'
+              ? '<p class="mb-0 text-secondary">This order is completed and can no longer be cancelled.</p>'
             : canCancelAsGuest
               ? '<p class="mb-3">This order is eligible for cancellation through your account.</p><button id="cancel-order" class="btn btn-danger w-100" type="button">Cancel order</button>'
               : `<p class="mb-0">The 24-hour cancellation window has closed. This order will be processed.</p><p class="small text-secondary mb-0 mt-2">Cancellation deadline: ${escapeText(cancellationAt.toLocaleString())}</p>`}

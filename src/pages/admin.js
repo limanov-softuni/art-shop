@@ -92,6 +92,10 @@ async function loadDashboard() {
           <strong>${data.confirmed_orders}</strong>
         </article>
         <article class="admin-summary-card">
+          <span>Completed orders</span>
+          <strong>${data.completed_orders ?? 0}</strong>
+        </article>
+        <article class="admin-summary-card">
           <span>Confirmed order value</span>
           <strong>${formatEUR(data.confirmed_order_value)}</strong>
         </article>

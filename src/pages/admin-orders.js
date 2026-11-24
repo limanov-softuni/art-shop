@@ -62,7 +62,7 @@ async function loadAdminOrders() {
   if (!await requireAdmin()) return;
 
   const statusParam = params.get('status') ?? 'all';
-  const status = ['all', 'confirmed', 'cancelled'].includes(statusParam) ? statusParam : 'all';
+  const status = ['all', 'confirmed', 'completed', 'cancelled'].includes(statusParam) ? statusParam : 'all';
   const productId = params.get('product')?.trim() ?? '';
   const orderDate = params.get('date')?.trim() ?? '';
   const reference = params.get('reference')?.trim() ?? '';
@@ -105,7 +105,7 @@ async function loadAdminOrders() {
         <div class="col-12 col-sm-6 col-lg-2">
           <label class="form-label" for="admin-order-status">Status</label>
           <select id="admin-order-status" class="form-select" name="status">
-            ${[['all','All'],['confirmed','Confirmed'],['cancelled','Cancelled']].map(([value,label]) => `
+            ${[['all','All'],['confirmed','Confirmed'],['completed','Completed'],['cancelled','Cancelled']].map(([value,label]) => `
               <option value="${value}"${status === value ? ' selected' : ''}>${label}</option>
             `).join('')}
           </select>
@@ -205,6 +205,7 @@ async function loadAdminOrders() {
       ${data.orders.map((order) => {
         const created = new Date(order.created_at);
         const cancelled = order.cancelled_at ? new Date(order.cancelled_at) : null;
+        const completed = order.completed_at ? new Date(order.completed_at) : null;
         return `
           <article class="admin-order-row">
             <div class="admin-order-main">
@@ -215,20 +216,26 @@ async function loadAdminOrders() {
                 <div><dt>Created</dt><dd>${escapeText(created.toLocaleString())}</dd></div>
                 <div><dt>Completion date</dt><dd>Not tracked for confirmed orders</dd></div>
                 ${cancelled ? `<div><dt>Cancelled at</dt><dd>${escapeText(cancelled.toLocaleString())}</dd></div>` : ''}
+                ${completed ? `<div><dt>Completed at</dt><dd>${escapeText(completed.toLocaleString())}</dd></div>` : ''}
               </dl>
             </div>
             <div class="admin-order-side">
               <span class="badge ${order.status === 'confirmed' ? 'badge-success' : 'badge-neutral'}">
-                ${order.status === 'confirmed' ? 'Confirmed' : 'Cancelled'}
+                ${order.status === 'confirmed' ? 'Confirmed' : order.status === 'completed' ? 'Completed' : 'Cancelled'}
               </span>
               <strong>${formatEUR(order.saved_price)}</strong>
               <div class="admin-order-actions">
                 <a class="btn btn-secondary btn-sm"
                   href="/order-details/?id=${encodeURIComponent(order.id)}">View details</a>
                 ${order.status === 'confirmed'
-                  ? `<button class="btn btn-outline-danger btn-sm" type="button"
+                  ? `
+                    <button class="btn btn-primary btn-sm" type="button"
+                      data-admin-complete="${escapeText(order.id)}"
+                      data-admin-reference="${escapeText(order.reference)}">Complete</button>
+                    <button class="btn btn-outline-danger btn-sm" type="button"
                       data-admin-cancel="${escapeText(order.id)}"
-                      data-admin-reference="${escapeText(order.reference)}">Cancel</button>`
+                      data-admin-reference="${escapeText(order.reference)}">Cancel</button>
+                  `
                   : ''}
               </div>
             </div>
@@ -279,6 +286,39 @@ async function loadAdminOrders() {
         showToast('This order was already cancelled.', { type: 'info' });
       } else {
         showToast(cancelData?.message || 'Cancellation could not be completed.', { type: 'error' });
+        button.disabled = false;
+        return;
+      }
+      await loadAdminOrders();
+    });
+  });
+
+  results.querySelectorAll('[data-admin-complete]').forEach((button) => {
+    button.addEventListener('click', async () => {
+      const confirmed = await openConfirmation({
+        title: 'Complete this order?',
+        message: `Mark order ${button.dataset.adminReference} as completed after the product has been sent to the client.`,
+        confirmLabel: 'Complete order',
+        cancelLabel: 'Keep confirmed',
+        destructive: false,
+      });
+      if (!confirmed) return;
+
+      button.disabled = true;
+      const { data: completeData, error: completeError } = await supabase.rpc('complete_order', {
+        p_order_id: button.dataset.adminComplete,
+      });
+      if (completeError) {
+        showToast(completeError.message || 'Order could not be completed.', { type: 'error' });
+        button.disabled = false;
+        return;
+      }
+      if (completeData?.status === 'completed') {
+        showToast('Order marked as completed.', { type: 'success' });
+      } else if (completeData?.status === 'already_completed') {
+        showToast('This order was already completed.', { type: 'info' });
+      } else {
+        showToast(completeData?.message || 'Order could not be completed.', { type: 'error' });
         button.disabled = false;
         return;
       }

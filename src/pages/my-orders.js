@@ -20,7 +20,7 @@ const statusParam = params.get('status') ?? 'all';
 const pageParam = params.get('page') ?? '1';
 let activeRequest = 0;
 
-const validStatuses = ['all', 'confirmed', 'cancelled'];
+const validStatuses = ['all', 'confirmed', 'completed', 'cancelled'];
 const status = validStatuses.includes(statusParam) ? statusParam : 'all';
 const page = /^[1-9]\d*$/.test(pageParam) ? Number(pageParam) : 1;
 
@@ -69,6 +69,7 @@ pageContent.innerHTML = `
       ${[
         ['all', 'All'],
         ['confirmed', 'Confirmed'],
+        ['completed', 'Completed'],
         ['cancelled', 'Cancelled'],
       ].map(([value, label]) => `
         <a href="${escapeText(buildUrl(value, 1))}"
@@ -232,7 +233,7 @@ async function loadOrders() {
                   <p class="text-secondary mb-0">${escapeText(createdLabel)}</p>
                 </div>
                 <span class="badge ${order.status === 'confirmed' ? 'badge-success' : 'badge-neutral'}">
-                  ${order.status === 'confirmed' ? 'Confirmed' : 'Cancelled'}
+                  ${order.status === 'confirmed' ? 'Confirmed' : order.status === 'completed' ? 'Completed' : 'Cancelled'}
                 </span>
               </div>
               <div class="order-list-footer">

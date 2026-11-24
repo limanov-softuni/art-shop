@@ -17,6 +17,7 @@ Build a genuine multi-page Art Shop System for the SoftUni "Software Technologie
 - The order and confirmation pages require authentication, preserve request/draft state, reconcile timed-out submissions, and verify persisted authorized orders.
 - My Orders and Order Details restrict reads to the authenticated owner or authorized admin, use deterministic server pagination, and cancel only through the protected RPC.
 - Owner cancellation is permitted only within 24 hours of placement; the server rejects requests after the deadline.
+- Admins can transition confirmed orders to completed after shipment, and completed orders remain unavailable and terminal.
 - Admin product pages require a database-verified admin session, support create/edit/publish/deactivate operations, and delete only unreferenced records through an authorized RPC.
 - Product image management uses a dedicated public `product-images` bucket, admin-only Storage policies, generated object paths, metadata synchronization, cover fallback, and partial-failure cleanup.
 - Admin order administration uses server-side filtering/pagination and aggregation, records actor-approved cancellation reasons, and labels order value separately from revenue.
