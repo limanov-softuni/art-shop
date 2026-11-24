@@ -315,7 +315,7 @@ async function loadOrderPage() {
           </div>
           <div class="checkout-cancellation">
             <i class="bi bi-clock-history" aria-hidden="true"></i>
-            <span>Guests may cancel an order after 24 hours. The order remains in the system.</span>
+            <span>Guests may cancel within 24 hours after placing the order. After the window closes, the order is processed.</span>
           </div>
           <div class="checkout-total">
             <span>Total EUR</span>

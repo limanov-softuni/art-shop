@@ -75,6 +75,6 @@ Admins may not rely on direct browser role values for authorization. Database RL
 - New orders are allocated only through `public.create_order`.
 - The function derives the guest identity from `auth.uid()`, computes the current EUR price server-side, verifies activity and availability while holding the product row lock, and compares the supplied quote before insertion.
 - `public.get_product_availability` returns only aggregate active/available state. It does not expose orders or order events.
-- Cancellation is handled only through `public.cancel_order`. The owner must wait 24 hours; admins may cancel supported orders regardless of age.
+- Cancellation is handled only through `public.cancel_order`. The owner may cancel only within 24 hours after placement; after that deadline, the order is processed and the owner cannot cancel it. Admins may cancel supported orders regardless of age.
 - Cancellation preserves the order row, sets a server timestamp, and records one server-generated cancellation event.
 - Repeated cancellation returns an idempotent already-cancelled result.

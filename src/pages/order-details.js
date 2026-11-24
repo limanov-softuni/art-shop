@@ -143,7 +143,7 @@ async function loadOrderDetails() {
   cancellationAt.setHours(cancellationAt.getHours() + 24);
   const now = new Date();
   const canCancelAsGuest = order.status === 'confirmed'
-    && now >= cancellationAt;
+    && now <= cancellationAt;
 
   pageContent.innerHTML = `
     <nav aria-label="Order context" class="product-detail-breadcrumb">
@@ -192,7 +192,7 @@ async function loadOrderDetails() {
             ? '<p class="mb-0 text-secondary">This order is already cancelled. Repeated cancellation is safe.</p>'
             : canCancelAsGuest
               ? '<p class="mb-3">This order is eligible for cancellation through your account.</p><button id="cancel-order" class="btn btn-danger w-100" type="button">Cancel order</button>'
-              : `<p class="mb-0">Guests can cancel after 24 hours.</p><p class="small text-secondary mb-0 mt-2">Eligible at ${escapeText(cancellationAt.toLocaleString())}</p>`}
+              : `<p class="mb-0">The 24-hour cancellation window has closed. This order will be processed.</p><p class="small text-secondary mb-0 mt-2">Cancellation deadline: ${escapeText(cancellationAt.toLocaleString())}</p>`}
         </section>
         <section class="order-event-card" aria-labelledby="order-events-heading">
           <h2 id="order-events-heading" class="h5">Order events</h2>
