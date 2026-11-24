@@ -214,7 +214,6 @@ async function loadAdminOrders() {
               <p class="text-secondary mb-2">Client: ${escapeText(order.client_name)}</p>
               <dl class="admin-order-dates">
                 <div><dt>Created</dt><dd>${escapeText(created.toLocaleString())}</dd></div>
-                <div><dt>Completion date</dt><dd>Not tracked for confirmed orders</dd></div>
                 ${cancelled ? `<div><dt>Cancelled at</dt><dd>${escapeText(cancelled.toLocaleString())}</dd></div>` : ''}
                 ${completed ? `<div><dt>Completed at</dt><dd>${escapeText(completed.toLocaleString())}</dd></div>` : ''}
               </dl>
