@@ -40,10 +40,12 @@ export function renderFooter() {
             <a class="footer-brand" href="/">Art Shop</a>
             <p>Curated art for considered spaces.</p>
           </div>
-          <nav aria-label="Footer navigation">
+          <nav aria-label="Footer navigation" data-footer-navigation>
             <a href="/products/">Products</a>
-            <a href="/login/">Login</a>
-            <a href="/register/">Register</a>
+            <span data-footer-auth-links>
+              <a href="/login/">Login</a>
+              <a href="/register/">Register</a>
+            </span>
           </nav>
         </div>
         <div class="footer-meta">
