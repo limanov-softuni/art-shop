@@ -134,20 +134,43 @@ async function loadProducts(searchTerm = '') {
     return;
   }
 
-  const availabilityEntries = await Promise.all(
-    products.map(async (product) => {
-      const { data } = await supabase.rpc(
-        'get_product_availability',
-        { p_product_id: product.id }
-      );
-      return [product.id, data?.is_available === true];
-    })
+  const productIds = products.map((product) => product.id);
+  const { data: availabilityRows, error: availabilityError } = await supabase.rpc(
+    'get_products_availability',
+    { p_product_ids: productIds }
   );
-  const availabilityById = new Map(availabilityEntries);
+
+  if (availabilityError) {
+    featuredContainer.innerHTML = renderEmptyState({
+      title: 'Catalog unavailable',
+      message: 'We could not verify product availability.',
+      icon: 'bi-wifi-off',
+    });
+    showToast('Could not verify product availability.', { type: 'error' });
+    return;
+  }
+
+  const availabilityById = new Map(
+    (availabilityRows ?? []).map((row) => [row.product_id, row.is_available === true])
+  );
+  const availableProducts = products.filter(
+    (product) => availabilityById.get(product.id) === true
+  );
+
+  if (!availableProducts.length) {
+    featuredContainer.innerHTML = renderEmptyState({
+      title: normalizedTerm ? 'No available matching products' : 'No available featured products',
+      message: normalizedTerm
+        ? `No available active products match "${normalizedTerm}".`
+        : 'There are no available products to display right now.',
+      icon: 'bi-inbox',
+    });
+    return;
+  }
 
   featuredContainer.innerHTML = `
     <div class="row g-4">
-      ${products.map((product) => {
+      ${availableProducts.map((product) => {
         const cover = (product.product_images ?? [])
           .find((image) => image.is_cover)
           ?? [...(product.product_images ?? [])]
