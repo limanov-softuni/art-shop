@@ -75,20 +75,20 @@ erDiagram
     PRODUCTS ||--o{ PRODUCT_IMAGES : has
     PRODUCTS ||--o{ ORDERS : referenced_by
     ORDERS ||--o{ ORDER_EVENTS : has
-    AUTH_USERS o|--o{ ORDER_EVENTS : acts_on
+    AUTH_USERS ||--o{ ORDER_EVENTS : acts_on
 
     AUTH_USERS {
         uuid id PK
         varchar email
     }
     PROFILES {
-        uuid id PK_FK
+        uuid id PK, FK
         text display_name
         text phone
         timestamptz updated_at
     }
     USER_ROLES {
-        uuid user_id PK_FK
+        uuid user_id PK, FK
         text role
     }
     PRODUCTS {
