@@ -8,7 +8,9 @@ const supabaseUrl = process.env.SUPABASE_URL;
 const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 const adminEmail = process.env.DEMO_ADMIN_EMAIL;
 const adminPassword = process.env.DEMO_ADMIN_PASSWORD;
-const guestPassword = process.env.DEMO_GUEST_PASSWORD;
+const guestPassword =
+  process.env.DEMO_CUSTOMER_PASSWORD ??
+  process.env.DEMO_GUEST_PASSWORD;
 
 function requireServerConfiguration() {
   const missing = [];
@@ -17,7 +19,9 @@ function requireServerConfiguration() {
   if (!serviceRoleKey) missing.push('SUPABASE_SERVICE_ROLE_KEY');
   if (!adminEmail) missing.push('DEMO_ADMIN_EMAIL');
   if (!isDryRun && !adminPassword) missing.push('DEMO_ADMIN_PASSWORD');
-  if (!isDryRun && !guestPassword) missing.push('DEMO_GUEST_PASSWORD');
+  if (!isDryRun && !guestPassword) {
+    missing.push('DEMO_CUSTOMER_PASSWORD');
+  }
 
   if (missing.length > 0) {
     throw new Error(`Missing server seed configuration: ${missing.join(', ')}`);

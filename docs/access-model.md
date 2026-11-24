@@ -11,7 +11,7 @@
 
 ## Confirmed project state
 
-The project has application tables for profiles, guest/admin roles, products, catalog images, orders, and order events. Supabase migration history contains the initial schema migration and a profile column-grant correction. Storage includes Supabase system tables and has no user-created buckets.
+The project has application tables for profiles, customer/admin roles, products, catalog images, orders, and order events. Supabase migration history contains the initial schema migration and a profile column-grant correction. Storage includes Supabase system tables and has no user-created buckets.
 
 ## Visitor
 
@@ -27,24 +27,24 @@ Visitors may:
 Visitors may not:
 
 - Read or modify orders.
-- Read guest profiles.
+- Read customer profiles.
 - Create or cancel orders.
 - Access administrative product or order operations.
 
-## Guest
+## Customer
 
-A guest is a visitor who has registered and signed in through Supabase Auth.
+A customer is a visitor who has registered and signed in through Supabase Auth.
 
-Guests inherit all visitor permissions and may additionally:
+Customers inherit all visitor permissions and may additionally:
 
 - Read and update only permitted fields of their own profile.
 - Create orders through an authorized database operation that validates ownership and inventory.
 - Read only their own orders and order items.
 - Cancel their own cancellable orders through an authorized database operation that validates state and restores inventory safely.
 
-Guests may not:
+Customers may not:
 
-- Read another guest's profile or orders.
+- Read another customer's profile or orders.
 - Update protected profile fields or administrator fields.
 - Change order items or state by direct privileged table access.
 - Perform administration through a browser-only role flag.
@@ -73,7 +73,7 @@ Admins may not rely on direct browser role values for authorization. Database RL
 ## Booking operations
 
 - New orders are allocated only through `public.create_order`.
-- The function derives the guest identity from `auth.uid()`, computes the current EUR price server-side, verifies activity and availability while holding the product row lock, and compares the supplied quote before insertion.
+- The function derives the customer identity from `auth.uid()`, computes the current EUR price server-side, verifies activity and availability while holding the product row lock, and compares the supplied quote before insertion.
 - `public.get_product_availability` returns only aggregate active/available state. It does not expose orders or order events.
 - Cancellation is handled only through `public.cancel_order`. The owner may cancel only within 24 hours after placement; after that deadline, the order is processed and the owner cannot cancel it. Admins may cancel supported orders regardless of age.
 - Cancellation preserves the order row, sets a server timestamp, and records one server-generated cancellation event.

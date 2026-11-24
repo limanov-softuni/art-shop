@@ -16,11 +16,11 @@ Set these variables in a server shell or private environment file:
 - `SUPABASE_SERVICE_ROLE_KEY`
 - `DEMO_ADMIN_EMAIL`
 - `DEMO_ADMIN_PASSWORD`
-- `DEMO_GUEST_PASSWORD`
+- `DEMO_CUSTOMER_PASSWORD`
 
 `SUPABASE_PROJECT_REF` must exactly match `lskvwfxgpoorcnicttaj`, and `SUPABASE_URL` must exactly match `https://lskvwfxgpoorcnicttaj.supabase.co`.
 
-The demo administrator email must use the reserved `@example.invalid` domain. Guest accounts use reserved fictional `@example.invalid` addresses. Auth user creation uses confirmed accounts and does not send invitations or arbitrary-address emails.
+The demo administrator email must use the reserved `@example.invalid` domain. Customer accounts use reserved fictional `@example.invalid` addresses. Auth user creation uses confirmed accounts and does not send invitations or arbitrary-address emails.
 
 The password values are initial passwords only. Reruns never update an existing account's password.
 
@@ -34,7 +34,7 @@ $env:SUPABASE_URL="https://lskvwfxgpoorcnicttaj.supabase.co"
 $env:SUPABASE_SERVICE_ROLE_KEY="<server-only-service-role-key>"
 $env:DEMO_ADMIN_EMAIL="demo.admin@example.invalid"
 $env:DEMO_ADMIN_PASSWORD="<initial-admin-password>"
-$env:DEMO_GUEST_PASSWORD="<initial-guest-password>"
+$env:DEMO_CUSTOMER_PASSWORD="<initial-customer-password>"
 npm.cmd run seed:demo:dry
 ```
 
@@ -50,8 +50,8 @@ $env:SUPABASE_URL="https://lskvwfxgpoorcnicttaj.supabase.co"
 $env:SUPABASE_SERVICE_ROLE_KEY="<server-only-service-role-key>"
 $env:DEMO_ADMIN_EMAIL="demo.admin@example.invalid"
 $env:DEMO_ADMIN_PASSWORD="<initial-admin-password>"
-$env:DEMO_GUEST_PASSWORD="<initial-guest-password>"
+$env:DEMO_CUSTOMER_PASSWORD="<initial-customer-password>"
 npm.cmd run seed:demo
 ```
 
-The script reports created and skipped counts. Reruns reuse existing Auth accounts and seed records by exact email, product name, and order reference. Existing passwords are not changed, existing admin status is preserved, guest users are assigned only a missing guest role, and unrelated database records are not reset or deleted.
+The script reports created and skipped counts. Reruns reuse existing Auth accounts and seed records by exact email, product name, and order reference. Existing passwords are not changed, existing admin status is preserved, customer users are assigned only a missing customer role, and unrelated database records are not reset or deleted.

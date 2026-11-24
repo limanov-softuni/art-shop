@@ -2,7 +2,7 @@
 
 Art Shop is a multi-page art catalog and order-management application built as a SoftUni “Software Technologies with AI” capstone project.
 
-Visitors can browse active published artworks, search by name, filter by destination/type, price and availability, view product galleries, and open checkout. Registered guests can maintain their profile, place physical-art product orders, review their own order history, and cancel eligible confirmed orders within 24 hours of placement. Administrators can manage products, publication state, catalog images, and customer orders.
+Visitors can browse active published artworks, search by name, filter by destination/type, price and availability, view product galleries, and open checkout. Registered customers can maintain their profile, place physical-art product orders, review their own order history, and cancel eligible confirmed orders within 24 hours of placement. Administrators can manage products, publication state, catalog images, and customer orders.
 
 An order is created through a database RPC with a server-derived user identity and server-calculated EUR price. Confirmed and completed orders keep a physical product unavailable. Cancelled orders release the product again. Supported order states are `confirmed`, `cancelled`, and `completed`.
 
@@ -29,8 +29,8 @@ Vite builds the following routes as separate HTML entry pages:
 /register/              Registration
 /order/?productId=...   Authenticated checkout
 /order-confirmation/    Persisted order confirmation
-/my-orders/             Guest order history
-/order-details/?id=...  Guest/admin order details
+/my-orders/             Customer order history
+/order-details/?id=...  Customer/admin order details
 /account/               Authenticated profile
 /admin/                 Admin dashboard
 /admin/products/        Product administration
@@ -139,7 +139,7 @@ Key relationships and rules:
 
 - `profiles.id` references `auth.users.id`.
 - `user_roles.user_id` references `auth.users.id`; one role row is allowed per user.
-- `user_roles.role` is constrained to `guest` or `admin`.
+- `user_roles.role` distinguishes customer accounts from administrators.
 - `products` has non-negative EUR prices and an active/publication flag.
 - `product_images.product_id` uses restricted deletion so catalog records retain image integrity.
 - `orders.product_id` and `orders.user_id` use restricted deletion, preserving historical order and catalog relationships.
@@ -239,7 +239,7 @@ The first-admin script requires an explicit existing Auth UUID and server-only c
 | `scripts/seed-demo.mjs` | Rerunnable demo Auth/account/product/order seed |
 | `scripts/seed-art-images.mjs` | Public-domain art image and metadata seed |
 | `scripts/bootstrap-first-admin.mjs` | Trusted explicit-UUID first-admin bootstrap |
-| `docs/access-model.md` | Visitor, guest and admin authorization model |
+| `docs/access-model.md` | Visitor, customer and admin authorization model |
 | `docs/implementation-plan.md` | Project milestones and delivery plan |
 | `docs/demo-seed.md` | Demo seed execution instructions |
 | `docs/art-image-seed.md` | Real image seed instructions |
@@ -251,7 +251,7 @@ The first-admin script requires an explicit existing Auth UUID and server-only c
 ## Verification and security
 
 - Admin privileges are verified through `user_roles` and database RPC authorization, not a browser role flag.
-- RLS protects guest and admin data access.
+- RLS protects customer and admin data access.
 - Order creation and cancellation use database RPC operations.
 - Customer order reads are limited by ownership.
 - Catalog and availability queries do not expose order or customer data.
